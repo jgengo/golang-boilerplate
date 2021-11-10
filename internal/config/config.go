@@ -7,10 +7,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const defaultServerPort = 5002
-
 type Config struct {
-	ServerPort int    `yaml:"server_port" env:"SERVER_PORT"`
+	ServerPort int
 	DSN        string `yaml:"dsn" env:"DSN"`
 }
 
@@ -21,9 +19,9 @@ func (c Config) Validate() error {
 
 }
 
-func Load(file string) (*Config, error) {
+func Load(file string, port int) (*Config, error) {
 	c := Config{
-		ServerPort: defaultServerPort,
+		ServerPort: port,
 	}
 
 	bytes, err := ioutil.ReadFile(file)
