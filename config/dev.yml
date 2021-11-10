@@ -1,1 +1,1 @@
-dsn: 'lol'
+dsn: 'postgres://localhost/postgres?sslmode=disable&user=user&password=password'
