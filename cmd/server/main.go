@@ -54,8 +54,8 @@ func main() {
 
 	address := fmt.Sprintf(":%v", cfg.ServerPort)
 	hs := &http.Server{
-		Addr: address,
-		// Handler: buildHandler(cfg),
+		Addr:    address,
+		Handler: buildHandler(cfg),
 	}
 
 	go routing.GracefulShutdown(hs, 10*time.Second, log.Printf)
@@ -77,10 +77,20 @@ func buildHandler(cfg *config.Config) http.Handler {
 		fault.Recovery(log.Printf),
 	)
 
-	_ = router.Group("/v1")
+	api := router.Group("/api")
+
+	api.Get("/users", func(c *routing.Context) error {
+		return c.Write("users#index")
+	})
+	api.Post("/users", func(c *routing.Context) error {
+		return c.Write("users#create")
+	})
+	api.Put(`/users/<id:\d+>`, func(c *routing.Context) error {
+		return c.Write("users#update ->" + c.Param("id"))
+	})
 
 	// serve index file
-	router.Get("/", file.Content("ui/index.html"))
+	router.Get("/", file.Content("web/ui/index.html"))
 
 	return router
 
